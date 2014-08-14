@@ -1,6 +1,8 @@
 require 'twitter'
 require 'http'
 
+$stdout.sync = true
+
 twitter_config = {
 	consumer_key: "#{ENV['TWITTER_CONSUMER_KEY']}",
 	consumer_secret: "#{ENV['TWITTER_CONSUMER_SECRET']}",
