@@ -21,15 +21,15 @@ users_to_monitor = {
 	'delay', 'incident', 'multi-vehicle', 'mva', 'mvi', 'stall']
 
 def isHighwayIncidents(message)
-	if ['#BCHwy91', '#BCHwy99'].include? message.downcase
+	if ['BCHwy91', 'BCHwy99'].include? message.downcase
 		priority = 1 if @events.include? message.downcase
 		sendToPushover(message, priority)
 	end
 end
 
 def isSkytrainIncidents(message)
-	if (message.downcase.include? '#RiderAlert') && 
-		 (message.downcase.include? '#SkyTrain')
+	if (message.downcase.include? 'RiderAlert') && 
+		 (message.downcase.include? 'SkyTrain')
 		 sendToPushover(message, 1)
 	end
 end
