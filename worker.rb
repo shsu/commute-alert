@@ -36,12 +36,18 @@ end
 
 def sendToPushover(message, priority=nil)
 	priority ||= -1
-	HTTP.post 'https://api.pushover.net/1/messages.json', params: {
+	pushoverResponse = HTTP.post('https://api.pushover.net/1/messages.json', params: {
 		token: "#{ENV['PUSHOVER_APP_TOKEN']}",
 		user: "#{ENV['PUSHOVER_USER_KEY']}",
 		message: message,
 		priority: priority
-	}
+	}).status_code
+
+	if pushoverResponse == 200
+		true
+	else
+		puts "[Error] Pushover reponse code #{pushoverResponse}"
+	end
 end
 
 client = Twitter::Streaming::Client.new(twitter_config)
