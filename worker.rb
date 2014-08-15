@@ -20,6 +20,10 @@ users_to_monitor = {
 @events = ['accident', 'block', 'broken', 'clos', 'collision', 'crash', 
 	'delay', 'incident', 'multi-vehicle', 'mva', 'mvi', 'stall']
 
+def putsDebug(message)
+	puts "[Debug] ${message}" if ENV['DEBUG_MODE']
+end
+
 def isHighwayIncidents(message)
 	if ['BCHwy91', 'BCHwy99'].include? message.downcase
 		priority = 1 if @events.include? message.downcase
@@ -43,6 +47,8 @@ def sendToPushover(message, priority=nil)
 		priority: priority
 	}).status_code
 
+	putsDebug("(#{priority}}) " + message)
+
 	if pushoverResponse == 200
 		true
 	else
@@ -54,7 +60,8 @@ client = Twitter::Streaming::Client.new(twitter_config)
 
 client.filter(follow: users_to_monitor.keys.join(', ')) do |object|
   if object.is_a?(Twitter::Tweet)
-  	puts object.text
+  	putsDebug(object.text)
+
   	isHighwayIncidents(object.text) || isSkytrainIncidents(object.text)
   end
 end
