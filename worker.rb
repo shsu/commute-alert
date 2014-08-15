@@ -18,7 +18,7 @@ users_to_monitor = {
 }
 
 @events = ['accident', 'block', 'broken', 'clos', 'collision', 'crash', 
-	'delay', 'incident', 'multi-vehicle', 'mva', 'stall']
+	'delay', 'incident', 'multi-vehicle', 'mva', 'mvi', 'stall']
 
 def isHighwayIncidents(message)
 	if ['#BCHwy91', '#BCHwy99'].include? message.downcase
