@@ -4,7 +4,7 @@ require 'http'
 @events = ['accident', 'block', 'broken', 'clos', 'collision', 'crash', 
 	'delay', 'incident', 'multi-vehicle', 'mva', 'mvi', 'stall']
 
-@highways_to_monitor = ['BCHwy91', 'BCHwy99']
+@highways_to_monitor = ['hwy91', 'hwy99']
 
 users_to_monitor = {
 	33918567 => 'am730traffic',
@@ -22,8 +22,8 @@ def isHighwayIncidents?(message)
 end
 
 def isSkytrainIncidents?(message)
-	if (message.downcase.include? 'RiderAlert') && 
-		 (message.downcase.include? 'SkyTrain')
+	if (message.downcase.include? 'rideralert') && 
+		 (message.downcase.include? 'skytrain')
 		 sendToPushover(message, 1)
 		 true
 	end
