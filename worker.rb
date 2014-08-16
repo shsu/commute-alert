@@ -54,8 +54,8 @@ client = Twitter::Streaming::Client.new({
 })
 
 client.filter(follow: users_to_monitor.keys.join(', ')) do |object|
-  if object.is_a?(Twitter::Tweet)
+  if object.is_a?(Twitter::Tweet) && object.in_reply_to_user_id.nil?
+    puts "[Debug] #{object.user.name}: #{object.text}" if ENV['DEBUG']
   	isHighwayIncidents?(object.text) || isSkytrainIncidents?(object.text)
-  	puts "[Debug] #{object.text}" if ENV['DEBUG']
   end
 end
