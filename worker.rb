@@ -1,14 +1,10 @@
 require 'twitter'
 require 'http'
 
-$stdout.sync = true
+@events = ['accident', 'block', 'broken', 'clos', 'collision', 'crash', 
+	'delay', 'incident', 'multi-vehicle', 'mva', 'mvi', 'stall']
 
-twitter_config = {
-	consumer_key: "#{ENV['TWITTER_CONSUMER_KEY']}",
-	consumer_secret: "#{ENV['TWITTER_CONSUMER_SECRET']}",
-	access_token: "#{ENV['TWITTER_ACCESS_TOKEN']}",
-	access_token_secret: "#{ENV['TWITTER_ACCESS_TOKEN_SECRET']}"
-}
+@highways_to_monitor = ['BCHwy91', 'BCHwy99']
 
 users_to_monitor = {
 	33918567 => 'am730traffic',
@@ -17,51 +13,49 @@ users_to_monitor = {
 	61617150 => 'translink' 
 }
 
-@events = ['accident', 'block', 'broken', 'clos', 'collision', 'crash', 
-	'delay', 'incident', 'multi-vehicle', 'mva', 'mvi', 'stall']
-
-def putsDebug(message)
-	puts "[Debug] ${message}" if ENV['DEBUG_MODE']
-end
-
-def isHighwayIncidents(message)
-	if ['BCHwy91', 'BCHwy99'].include? message.downcase
+def isHighwayIncidents?(message)
+	if @highways_to_monitor.include? message.downcase
 		priority = 1 if @events.include? message.downcase
 		sendToPushover(message, priority)
+		true
 	end
 end
 
-def isSkytrainIncidents(message)
+def isSkytrainIncidents?(message)
 	if (message.downcase.include? 'RiderAlert') && 
 		 (message.downcase.include? 'SkyTrain')
 		 sendToPushover(message, 1)
+		 true
 	end
 end
 
-def sendToPushover(message, priority=nil)
-	priority ||= -1
-	pushoverResponse = HTTP.post('https://api.pushover.net/1/messages.json', params: {
+def sendToPushover(message, priority = -1)
+	pushoverResponseCode = HTTP.post('https://api.pushover.net/1/messages.json', params: {
 		token: "#{ENV['PUSHOVER_APP_TOKEN']}",
 		user: "#{ENV['PUSHOVER_USER_KEY']}",
 		message: message,
 		priority: priority
 	}).status_code
 
-	putsDebug("(#{priority}}) " + message)
-
-	if pushoverResponse == 200
-		true
+	if pushoverResponseCode != 200
+		puts "[Error] Pushover reponse code #{pushoverResponseCode}"
 	else
-		puts "[Error] Pushover reponse code #{pushoverResponse}"
+		puts "[Info #{priority}] #{message}"
 	end
 end
 
-client = Twitter::Streaming::Client.new(twitter_config)
+$stdout.sync = true
+
+client = Twitter::Streaming::Client.new({
+	consumer_key: "#{ENV['TWITTER_CONSUMER_KEY']}",
+	consumer_secret: "#{ENV['TWITTER_CONSUMER_SECRET']}",
+	access_token: "#{ENV['TWITTER_ACCESS_TOKEN']}",
+	access_token_secret: "#{ENV['TWITTER_ACCESS_TOKEN_SECRET']}"
+})
 
 client.filter(follow: users_to_monitor.keys.join(', ')) do |object|
   if object.is_a?(Twitter::Tweet)
-  	putsDebug(object.text)
-
-  	isHighwayIncidents(object.text) || isSkytrainIncidents(object.text)
+  	isHighwayIncidents?(object.text) || isSkytrainIncidents?(object.text)
+  	puts "[Debug] #{object.text}" if ENV['DEBUG']
   end
 end
