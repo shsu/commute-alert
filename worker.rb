@@ -14,8 +14,8 @@ users_to_monitor = {
 }
 
 def isHighwayIncidents?(message)
-	if @highways_to_monitor.include? message.downcase
-		priority = 1 if @events.include? message.downcase
+	if @highways_to_monitor.any? { |highway| message.downcase.include? highway }
+		priority = 1 if @events.any? { |event| message.downcase.include? event }
 		sendToPushover(message, priority)
 		true
 	end
