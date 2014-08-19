@@ -2,7 +2,7 @@ require 'twitter'
 require 'http'
 
 @events = ['accident', 'block', 'broken', 'clos', 'collision', 'crash', 
-	'delay', 'incident', 'multi-vehicle', 'mva', 'mvi', 'stall']
+	'delay', 'incident', 'multi-vehicle', 'problem', 'mva', 'mvi', 'stall']
 
 @highways_to_monitor = ['hwy91', 'hwy99']
 
@@ -22,8 +22,7 @@ def isHighwayIncidents?(message)
 end
 
 def isSkytrainIncidents?(message)
-	if (message.downcase.include? 'rideralert') && 
-		 (message.downcase.include? 'skytrain')
+	if (message.downcase.include? 'skytrain') &&  @events.any? { |event| message.downcase.include? event}
 		 sendToPushover(message, 1)
 		 true
 	end
