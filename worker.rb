@@ -7,8 +7,8 @@ require 'http'
 @highways_to_monitor = ['hwy91', 'hwy99']
 
 users_to_monitor = {
-	41618221 => 'drivebc',
   33918567 => 'am730traffic',
+# 41618221 => 'drivebc',
   104470692 => 'news1130traffic',
   61617150 => 'translink' 
 }
