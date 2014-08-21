@@ -60,7 +60,10 @@ client = Twitter::Streaming::Client.new({
 client.filter(follow: users_to_monitor.keys.join(', ')) do |object|
   if object.is_a?(Twitter::Tweet) && object.in_reply_to_user_id.nil? && 
     users_to_monitor.has_key?(object.user.id)
-    isHighwayIncidents?(object.text) || isSkytrainIncidents?(object.text)
-    puts "[Debug] #{object.user.name}: #{object.text}" if ENV['DEBUG']
+
+    message = "#{object.user.name}: #{object.text}"
+    if !isHighwayIncidents?(message) && !isSkytrainIncidents?(message) && ENV['DEBUG']
+      puts "[Debug] #{message}"
+    end
   end
 end
