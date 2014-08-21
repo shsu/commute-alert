@@ -1,5 +1,6 @@
 require 'twitter'
 require 'http'
+require 'json'
 
 @events = ['accident', 'block', 'broken', 'clos', 'collision', 'crash', 
   'delay', 'incident', 'multi-vehicle', 'problem', 'mva', 'mvi', 'stall']
@@ -30,17 +31,20 @@ def isSkytrainIncidents?(message)
 end
 
 def sendToPushover(message, priority = -1)
-  pushoverResponseCode = HTTP.post('https://api.pushover.net/1/messages.json', params: {
+  pushoverResponse = HTTP.post('https://api.pushover.net/1/messages.json', params: {
     token: "#{ENV['PUSHOVER_APP_TOKEN']}",
     user: "#{ENV['PUSHOVER_USER_KEY']}",
     message: message,
     priority: priority
-  }).status_code
+  })
 
-  if pushoverResponseCode != 200
-    puts "[Error] Pushover returned a #{pushoverResponseCode} error code."
+  if pushoverResponse.status_code == 200
+    serverity = priority == 1 ? 'Warn':'Info'
+    puts "[#{serverity}] #{message}"
+  elsif pushoverResponse.status_code == 400
+    puts "[Error] The " + JSON.parse(pushoverResponse.to_s)['errors'].join(' and ')
   else
-    puts "[Info] Pushover successfully sent #{message} with priority #{priority}."
+    puts "[Error] Pushover returned a #{pushoverResponse.status_code} error code."
   end
 end
 
