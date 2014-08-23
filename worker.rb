@@ -5,7 +5,7 @@ require 'json'
 @events = ['accident', 'block', 'broken', 'clos', 'collision', 'crash', 
   'delay', 'incident', 'multi-vehicle', 'problem', 'mva', 'mvi', 'stall']
 
-@highways_to_monitor = ['hwy91', 'hwy99']
+@highways_to_monitor = ['hwy91', 'alexfraser', 'hwy99', 'massey']
 
 users_to_monitor = {
   33918567 => 'am730traffic',
