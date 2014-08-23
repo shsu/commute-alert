@@ -31,7 +31,7 @@ def isSkytrainIncidents?(tweet)
   end
 end
 
-def sendTweetToPushover(tweet, priority = -1)
+def sendTweetToPushover(tweet, priority = -2)
   pushoverResponse = HTTP.post('https://api.pushover.net/1/messages.json', params: {
     token: "#{ENV['PUSHOVER_APP_TOKEN']}",
     user: "#{ENV['PUSHOVER_USER_KEY']}",
