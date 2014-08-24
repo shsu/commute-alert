@@ -15,9 +15,9 @@ users_to_monitor = {
 
 def isHighwayIncidents?(tweet)
   msg = tweet.text.downcase
-  if @highways_to_monitor.any? { |highway| msg.include? highway }
-    priority = 1 if @events.any? { |event| msg.include? event }
-    sendTweetToPushover(tweet, priority)
+  if @highways_to_monitor.any? { |highway| msg.include? highway } && 
+  	@events.any? { |event| msg.include? event }
+    sendTweetToPushover(tweet, 0)
     true
   end
 end
