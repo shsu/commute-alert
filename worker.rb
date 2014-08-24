@@ -41,7 +41,7 @@ def sendTweetToPushover(tweet, priority = -2)
   })
 
   if pushoverResponse.status_code == 200
-    serverity = priority == 1 ? 'Warn':'Info'
+    serverity = priority > 0 ? 'Warn':'Info'
     puts "[#{serverity}] #{tweet.user.name} #{tweet.text}"
   elsif pushoverResponse.status_code == 400
     puts "[Error] The " + JSON.parse(pushoverResponse.to_s)['errors'].join(' and ')
