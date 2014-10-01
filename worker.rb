@@ -3,7 +3,8 @@ require 'http'
 require 'json'
 
 @events = ['accident', 'block', 'broken', 'clos', 'collision', 'crash', 
-  'delay', 'incident', 'multi-vehicle', 'problem', 'mva', 'mvi', 'stall']
+  'delay', 'disruption', 'incident', 'multi-vehicle', 'problem', 'mva', 
+  'mvi', 'stall']
 
 @highways_to_monitor = ['hwy91', 'alexfraser', 'hwy99', 'massey']
 
