@@ -14,28 +14,19 @@ users_to_monitor = {
   61617150 => 'translink' 
 }
 
-def isHighwayIncidents?(tweet)
-  msg = tweet.text.downcase
-  if @highways_to_monitor.any? { |highway| msg.include? highway } && 
+def isHighwayIncidents?(msg)
+  @highways_to_monitor.any? { |highway| msg.include? highway } && 
   	@events.any? { |event| msg.include? event }
-    sendTweetToPushover(tweet, 0)
-    true
-  end
 end
 
-def isSkytrainIncidents?(tweet)
-  msg = tweet.text.downcase
-  if (msg.include? 'skytrain') &&  
-    @events.any? { |event| msg.include? event}
-     sendTweetToPushover(tweet, 1)
-     true
-  end
+def isSkytrainIncidents?(msg)
+  msg.include?('skytrain') && @events.any? { |event| msg.include? event }
 end
 
-def sendTweetToPushover(tweet, priority = -2)
+def sendTweetToPushover(tweet, priority = -2, user_token)
   pushoverResponse = HTTP.post('https://api.pushover.net/1/messages.json', params: {
     token: "#{ENV['PUSHOVER_APP_TOKEN']}",
-    user: "#{ENV['PUSHOVER_USER_KEY']}",
+    user: user_token,
     title: tweet.user.name,
     message: tweet.text,
     priority: priority
@@ -60,11 +51,17 @@ client = Twitter::Streaming::Client.new({
   access_token_secret: "#{ENV['TWITTER_ACCESS_TOKEN_SECRET']}"
 })
 
+pushover_user_keys = ENV['PUSHOVER_USER_KEY'].split(',')
+
 client.filter(follow: users_to_monitor.keys.join(', ')) do |tweet|
   if tweet.is_a?(Twitter::Tweet) && tweet.in_reply_to_user_id.nil? && 
     users_to_monitor.has_key?(tweet.user.id)
 
-    if !isHighwayIncidents?(tweet) && !isSkytrainIncidents?(tweet) && ENV['DEBUG']
+    if isHighwayIncidents?(tweet.text.downcase)
+    	pushover_user_keys.each { |key| sendTweetToPushover(tweet, 0, key) }
+    elsif isSkytrainIncidents?(tweet.text.downcase)
+      pushover_user_keys.each { |key| sendTweetToPushover(tweet, 1, key) }
+    elsif ENV['DEBUG']
       puts "[Debug] #{tweet.user.name}: #{tweet.text}"
     end
   end
