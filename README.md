@@ -1,6 +1,7 @@
 # Commute Alert
 
-Using Twitter streaming API and Pushover, alert users of any problems along their commute.
+Using Twitter streaming API and Pushbullet channels, alert subscribers of any 
+problems along their commute.
 
 ## Setup
 
@@ -8,9 +9,8 @@ Using Twitter streaming API and Pushover, alert users of any problems along thei
  * Create a new [Twitter App](https://apps.twitter.com/app/new)
  * Go to the API keys tab and generate your access token
 
-* Get a [Pushover Account](https://pushover.net)
- * Create a new [Pushover App](https://pushover.net/apps/build)
- * Download iOS or Android Pushover client (Free trial, full version costs $5)
+* Get a [Pushbullet Account](https://www.pushbullet.com)
+ * Go to [accounts settings](https://www.pushbullet.com/account) to get your access token
 
 ## Deploy
 
@@ -27,35 +27,16 @@ Make a copy of the example .env file. Insert your access tokens there:
 Assuming you have Ruby 2.1.x and bundler:
 
     bundle install
-    gem install foreman
-    foreman start
+    bundle exec foreman start
     
 ### For Heroku Deployments
-
-Create a new Heroku application:
-
-    heroku apps:create commute-alert
     
 Go to the Heroku dashboard and set the following environment variables:
 
-* `PUSHOVER_APP_TOKEN`
-* `PUSHOVER_USER_KEY`
+* `PUSHBULLET_ACCESS_TOKEN`
 * `TWITTER_ACCESS_TOKEN`
 * `TWITTER_ACCESS_TOKEN_SECRET`
 * `TWITTER_CONSUMER_KEY`
 * `TWITTER_CONSUMER_SECRET`
 
-Deploy the application:
-
-    bundle install
-    git push heroku master
-
 Optionally, you can add [Papertrail logging addon](https://addons.heroku.com/papertrail) to the app.
-
-## Customize
-
-Change the following to match your commute:
-
-1. Change the `@events` or `@highways` keywords array
-2. Change the `users_to_monitor` `twitter_id => nickname` hash
-    
