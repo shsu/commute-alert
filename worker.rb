@@ -45,7 +45,8 @@ def sendTweetToPushbullet(tweet, channel_tag = nil)
   request_body = {
     type: 'note',
     title: "#{tweet.user.name}",
-    message: "#{tweet.text}"
+    message: "#{tweet.text}",
+    channel_tag: "#{channel_tag}"
   }
 
   response = conn.post do |request|
