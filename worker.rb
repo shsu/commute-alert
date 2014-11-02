@@ -2,7 +2,7 @@ require 'twitter'
 require 'faraday'
 require 'json'
 
-require 'incident.rb'
+require './incident'
 
 users_to_monitor = {
   33918567 => 'am730traffic',
