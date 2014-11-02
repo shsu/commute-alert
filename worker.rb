@@ -4,19 +4,37 @@ require 'json'
 
 require './incident'
 
-users_to_monitor = {
-  33918567 => 'am730traffic',
-  104470692 => 'news1130traffic',
-  61617150 => 'translink' 
-}
-
 $stdout.sync = true
+
+def sendTweetToPushbullet(tweet, channel_tag = nil)
+  request_body = {
+    type: 'note',
+    title: "#{tweet.user.name}",
+    message: "#{tweet.text}",
+    channel_tag: "#{channel_tag}"
+  }
+
+  response = conn.post do |request|
+    request.url('/v2/pushes')
+    request.body = "#{request_body.to_json}"
+  end
+
+  if response.status != 200
+    puts "[Error] " + JSON.parse(response.to_s)['error']['message']
+  end
+end
 
 conn = Faraday.new(url: 'https://api.pushbullet.com/') do |faraday|
   faraday.adapter Faraday.default_adapter
   faraday.basic_auth("#{ENV['PUSHBULLET_ACCESS_TOKEN']}",'')
   faraday.headers['Content-Type'] = 'application/json'
 end
+
+users_to_monitor = {
+  33918567 => 'am730traffic',
+  104470692 => 'news1130traffic',
+  61617150 => 'translink'
+}
 
 client = Twitter::Streaming::Client.new({
   consumer_key: "#{ENV['TWITTER_CONSUMER_KEY']}",
@@ -38,23 +56,5 @@ client.filter(follow: users_to_monitor.keys.join(', ')) do |tweet|
     else
       puts "[Debug] #{tweet.user.name}: #{tweet.text}"
     end
-  end
-end
-
-def sendTweetToPushbullet(tweet, channel_tag = nil)
-  request_body = {
-    type: 'note',
-    title: "#{tweet.user.name}",
-    message: "#{tweet.text}",
-    channel_tag: "#{channel_tag}"
-  }
-
-  response = conn.post do |request|
-    request.url('/v2/pushes')
-    request.body = "#{request_body.to_json}"
-  end
-
-  if response.status != 200
-    puts "[Error] " + JSON.parse(response.to_s)['error']['message']
   end
 end
