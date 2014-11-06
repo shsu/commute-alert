@@ -20,7 +20,7 @@ def sendTweetToPushbullet(tweet, channel_tag = nil)
   request_body = {
     type: 'note',
     title: "#{tweet.user.name}",
-    message: "#{tweet.text}",
+    body: "#{tweet.text}",
     channel_tag: "#{channel_tag}"
   }
 
