@@ -39,4 +39,7 @@ Go to the Heroku dashboard and set the following environment variables:
 * `TWITTER_CONSUMER_KEY`
 * `TWITTER_CONSUMER_SECRET`
 
+* `PUSHOVER_APP_TOKEN`
+* `PUSHOVER_USER_KEY`
+
 Optionally, you can add [Papertrail logging addon](https://addons.heroku.com/papertrail) to the app.

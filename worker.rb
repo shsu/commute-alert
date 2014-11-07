@@ -37,6 +37,24 @@ def sendTweetToPushbullet(text, user, options = {})
   end
 end
 
+def sendTweetToPushover(text, user, options = {})
+  priority = options[:priority] || -1
+  response = Faraday.post('https://api.pushover.net/1/messages.json', 
+    token: "#{ENV['PUSHOVER_APP_TOKEN']}",
+    user: "#{ENV['PUSHOVER_USER_KEY']}",
+    message: "#{text}",
+    title: "#{user}",
+    priority: priority)
+
+  if response.status == 200
+    puts "[PO Info] #{user} #{text}"
+  elsif response.status[0] == 4
+    puts "[PO Error] The " + JSON.parse(pushoverResponse.to_s)['errors'].join(' and ')
+  else
+    puts "[PO Error] Unknown"
+  end
+end
+
 $stdout.sync = true
 
 client = Twitter::Streaming::Client.new({
@@ -52,10 +70,12 @@ client.filter(follow: @users_to_monitor.keys.join(', ')) do |tweet|
 
     if Incident::isSkytrain?(tweet.text.downcase)
       sendTweetToPushbullet(tweet.text, tweet.user.name, channel: 'skytrain')
+      sendTweetToPushover(tweet.text, tweet.user.name, priority: 1)
     elsif Incident::isHighway91?(tweet.text.downcase)
       sendTweetToPushbullet(tweet.text, tweet.user.name, channel: 'bchwy91')
     elsif Incident::isHighway99?(tweet.text.downcase)
       sendTweetToPushbullet(tweet.text, tweet.user.name, channel: 'bchwy99')
+      sendTweetToPushover(tweet.text, tweet.user.name)
     else
       puts "[Debug] #{tweet.user.name}: #{tweet.text}"
     end
