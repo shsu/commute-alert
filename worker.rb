@@ -16,11 +16,10 @@ require './incident'
   faraday.headers['Content-Type'] = 'application/json'
 end
 
-def sendTweetToPushbullet(tweet, channel_tag = nil)
+def sendTweetToPushbullet(text, user, channel_tag = nil)
   request_body = {
     type: 'note',
-    title: "#{tweet.user.name}",
-    body: "#{tweet.text}",
+    body: "#{text}\n\n#{user}",
     channel_tag: "#{channel_tag}"
   }
 
@@ -32,7 +31,7 @@ def sendTweetToPushbullet(tweet, channel_tag = nil)
   if response.status != 200
     puts "[Error] " + JSON.parse(response.to_s)['error']['message']
   else
-    puts "[Info] #{tweet.user.name}: #{tweet.text}"
+    puts "[Info] #{user}: #{text}"
   end
 end
 
@@ -50,11 +49,11 @@ client.filter(follow: @users_to_monitor.keys.join(', ')) do |tweet|
     @users_to_monitor.has_key?(tweet.user.id)
 
     if Incident::isSkytrain?(tweet.text.downcase)
-      sendTweetToPushbullet(tweet, 'skytrain')
+      sendTweetToPushbullet(tweet.text, tweet.user.name, 'skytrain')
     elsif Incident::isHighway91?(tweet.text.downcase)
-      sendTweetToPushbullet(tweet, 'bchwy91')
+      sendTweetToPushbullet(tweet.text, tweet.user.name, 'bchwy91')
     elsif Incident::isHighway99?(tweet.text.downcase)
-      sendTweetToPushbullet(tweet, 'bchwy99')
+      sendTweetToPushbullet(tweet.text, tweet.user.name, 'bchwy99')
     else
       puts "[Debug] #{tweet.user.name}: #{tweet.text}"
     end
