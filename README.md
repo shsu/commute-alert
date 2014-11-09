@@ -1,16 +1,16 @@
 # Commute Alert
 
 Using Twitter streaming API and Pushbullet channels, alert subscribers of any 
-problems along their commute.
+problems along their commute. This app also *supports* Pushover, but that 
+will require you to buy their [clients](https://pushover.net/clients).
 
 ## Setup
 
 * Get a [Twitter Developer Account](https://dev.twitter.com/)
- * Create a new [Twitter App](https://apps.twitter.com/app/new)
- * Go to the API keys tab and generate your access token
-
+  * Create a new [Twitter App](https://apps.twitter.com/app/new)
+  * Go to the API keys tab and generate your access token
 * Get a [Pushbullet Account](https://www.pushbullet.com)
- * Go to [accounts settings](https://www.pushbullet.com/account) to get your access token
+  * Go to [accounts settings](https://www.pushbullet.com/account) to get your access token
 
 ## Deploy
 
@@ -38,7 +38,6 @@ Go to the Heroku dashboard and set the following environment variables:
 * `TWITTER_ACCESS_TOKEN_SECRET`
 * `TWITTER_CONSUMER_KEY`
 * `TWITTER_CONSUMER_SECRET`
-
 * `PUSHOVER_APP_TOKEN`
 * `PUSHOVER_USER_KEY`
 
