@@ -28,9 +28,9 @@ def sendTweetToPushbullet(text, user, options = {})
     request.body = "#{request_body.to_json}"
   end
 
-  if response.status == 200
+  if response.status >= 200 && response.status < 300
     puts "[PB Info] #{user}: #{text}"
-  elsif response.status[0] == 4
+  elsif response.status >= 400 && response.status < 500
     puts "[PB Error] " + JSON.parse(response.to_s)['error']['message']
   else
     puts "[PB Error] Unknown"
@@ -46,9 +46,9 @@ def sendTweetToPushover(text, user, options = {})
     title: "#{user}",
     priority: priority)
 
-  if response.status == 200
+  if response.status >= 200 && response.status < 300
     puts "[PO Info] #{user} #{text}"
-  elsif response.status[0] == 4
+  elsif response.status >= 400 && response.status < 500
     puts "[PO Error] The " + JSON.parse(pushoverResponse.to_s)['errors'].join(' and ')
   else
     puts "[PO Error] Unknown"
