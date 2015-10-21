@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 require 'twitter'
 require 'faraday'
 require 'json'
